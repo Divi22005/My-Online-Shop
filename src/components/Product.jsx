@@ -2,35 +2,31 @@ import React, { useEffect, useState } from "react";
 import { useContext } from "react";
 import { AppContext } from "../App";
 import axios from "axios";
-
+import "./Product.css"
 export default function Product() {
   const { user } = useContext(AppContext);
   const [products, setProducts] = useState([]);
-
+  const API = import.meta.env.VITE_API_URL;
   const fetchProducts = async () => {
-    try {
-      const res = await axios.get("http://localhost:8080/products");
-      setProducts(res.data);
-    } catch (err) {
-      console.error("Error fetching products:", err);
-    }
+    const res = await axios.get(`${API}/products/all`);
+    setProducts(res.data);
   };
-
   useEffect(() => {
     fetchProducts();
   }, []);
-
   return (
-    <div style={{ padding: "20px" }}>
-      <h3>Welcome {user.name || "Guest"}! </h3>
-      <h4>Product List:</h4>
-      <ul>
-        {products.map((item) => (
-          <li key={item.id}>
-            <strong>{item.name}</strong> - ${item.price}
-          </li>
-        ))}
-      </ul>
+    <div>
+      <h3>Welcome {user.name}! </h3>
+      <div className="App-Product-Row">
+        {products &&
+          products.map((value) => (
+            <div key={value._id}>
+              <h3>{value.name}</h3>
+              <h4>{value.price}</h4>
+              <button>Add to Cart</button>
+            </div>
+          ))}
+      </div>
     </div>
   );
 }
